@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "24458718887",
+    "project_id": "streamo-62f50",
+    "storage_bucket": "streamo-62f50.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24458718887:android:f6dd01fef53cdce65ff582",
+        "android_client_info": {
+          "package_name": "com.sibyl.streamo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24458718887-l0u4bdlor39cgerfpfos6o5i1vvqbbah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0y1YCszoMg9hwNdbxpQEzN19xD77fZPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24458718887-l0u4bdlor39cgerfpfos6o5i1vvqbbah.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
