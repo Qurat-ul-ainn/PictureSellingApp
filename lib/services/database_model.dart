@@ -13,6 +13,7 @@ class DataCollection {
   Map<String, dynamic> toMap() {
     return {
       'Name': name,
+
       'Email': email,
       'Mobile': mobile,
       'Pass': pass,
