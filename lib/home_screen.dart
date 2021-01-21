@@ -4,9 +4,9 @@ import 'package:streamo/login_signup/components.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
-  final String userInfo ;
 
-  const HomePage({Key key, this.userInfo});
+
+ // const HomePage({Key key, this.userInfo});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -15,20 +15,29 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
  Firestore _firestore = Firestore.instance;
  FirebaseAuth _auth = FirebaseAuth.instance;
- String _name="", _points ="", _earnedMoney ="", _refferalcode="";
+ String _name="",  _refferalcode="";
+ int _points, _earnedMoney;
 
 
  getUser() async {
    FirebaseUser cuser =  await _auth.currentUser();
-   DocumentSnapshot user = await _firestore.collection("userInfo").document(cuser.uid).get();
 
+   DocumentSnapshot user = await _firestore.collection("UserInfo").document(cuser.uid).get();
+   print(user.data);
    setState(() {
      _name = user.data["Name"];
      _points = user.data["Points"];
-     _earnedMoney = user.data["Earned"];
-     _refferalcode = user.data["ReferralCode"];
+     _earnedMoney = user.data["EarnMoney"];
+     _refferalcode = user.data["Referral Code"];
    });
  }
+
+ @override
+  void initState() {
+   getUser();
+   // TODO: implement initState
+    super.initState();
+  }
 
 
   @override
@@ -48,20 +57,24 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: const EdgeInsets.all(25),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+
             children: <Widget>[
               Text(
                 _name,
                 style: TextStyle(
                   color: Colors.blue[900],
                   fontWeight: FontWeight.bold,
-                  fontSize: 10,
+                  fontSize: 40,
                 ),
               ),
               Text(
-                _points
+                "Your Points: $_points",
+                style: TextStyle(
+                  color: Colors.blue[900],
+                  fontSize: 20,
+                ),
               ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.2,),
               Center(
                 child: CircleAvatar(
                   backgroundColor: Colors.blue[900],
@@ -72,16 +85,28 @@ class _HomePageState extends State<HomePage> {
                     child: CircleAvatar(
                       backgroundColor: Colors.blue[900],
                       radius: 90,
-                      child: Text(_earnedMoney,style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold
-                      ),),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("You Earned",style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold
+                          ),),
+                          SizedBox(height: 20.0,),
+                          Text("$_earnedMoney",style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                          ),),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
+
+              SizedBox(height: 20.0,),
               TextComponent(
-                text: _refferalcode,
+                text: "Refferal Code: $_refferalcode",
               ),
             ],
           ),

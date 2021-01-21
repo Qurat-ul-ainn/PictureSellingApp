@@ -64,9 +64,9 @@ class SignIn extends StatelessWidget {
 
                       if (user != null) {
                         Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
+                            .pushReplacement(MaterialPageRoute(builder: (context) {
                           return HomePage(
-                            userInfo: user.displayName,
+
                           );
                         }));
                       } else {

@@ -11,21 +11,42 @@ class SignUp extends StatelessWidget {
   final _phoneController = TextEditingController();
   final _passController =TextEditingController();
   final _refCodeController =TextEditingController();
-  String points = '0';
-  String earnedMoney='0';
+  int points = 0;
+  int earnedMoney=0;
+  String code;
 
   Future<void> insertData(final userInfo) async{
     Firestore firestore = Firestore.instance;
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    FirebaseUser cuser =  await _auth.currentUser();
 
-     firestore.collection("UserInfo").add(userInfo)
-         .then((DocumentReference document) {
-      print(document.documentID);
-    }).catchError((e) {
-      print(e);
-    });
+     print("aa $code");
+     firestore.collection("UserInfo").document(cuser.uid).setData(userInfo);
+//         .add(userInfo)
+//         .then((DocumentReference document) {
+//      print(document.documentID);
+//    }).catchError((e) {
+//      print(e);
+//    });
   }
 
-  Future<bool> registration(String homePage ,String email, String phone,String pass,String points,String referral)async{
+//  Future<void> updateData() async{
+//    Firestore firestore = Firestore.instance;
+//    DocumentSnapshot user = await firestore.collection("UserInfo").document(_refCodeController.text).get();
+//    int _earnedMoney = user.data["EarnMoney"];
+//    int _points = user.data["Points"];
+//    firestore.collection("UserInfo").where({'Refferal Code', "==", code}).;
+//
+//
+////         .add(userInfo)
+////         .then((DocumentReference document) {
+////      print(document.documentID);
+////    }).catchError((e) {
+////      print(e);
+////    });
+//  }
+
+  Future<bool> registration(String homePage ,String email, String phone,String pass,int points,String referral)async{
     FirebaseAuth _auth = FirebaseAuth.instance;
     try{
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: pass);
@@ -33,8 +54,11 @@ class SignUp extends StatelessWidget {
 
       UserUpdateInfo info= UserUpdateInfo();
       info.displayName=homePage;
+      code = user.uid.substring(0, 6);
       user.updateProfile(info);
-
+      final userInfo =DataCollection(homePage, email,phone, pass,points, code,earnedMoney);
+      insertData(userInfo.toMap());
+     // updateData();
 
       return true;
     }
@@ -99,9 +123,9 @@ class SignUp extends StatelessWidget {
                     final gReferral = _phoneController.text.toString().trim();
 
 
-                    final userInfo =DataCollection(gHomePage, gEmail,gPhone, gPass,gReferral,points,earnedMoney);
-                    insertData(userInfo.toMap());
-                    bool result = await registration(gHomePage, gEmail,gPhone, gPass,gReferral,points);
+
+
+                    bool result = await registration(gHomePage, gEmail,gPhone, gPass,points, gReferral);
 
                     if(result){
                       Navigator.of(context).push(MaterialPageRoute(builder: (context){
