@@ -26,17 +26,17 @@ class SignIn extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: 60),
                   Text(
-                    'HELO AGAIN!\nWELCOM\nBACK',
+                    'HELLO AGAIN! WELCOME BACK',
                     style: TextStyle(
                       color: Colors.blue[900],
                       fontWeight: FontWeight.bold,
@@ -49,10 +49,12 @@ class SignIn extends StatelessWidget {
                   Component(
                     txtHint: 'Email Address',
                     txtController: _emailController,
+                    passHide: false,
                   ),
                   Component(
                     txtHint: 'Password',
                     txtController: _passController,
+                    passHide: true,
                   ),
                   Button(
                     btnTxt: 'Sign In',
@@ -76,7 +78,7 @@ class SignIn extends StatelessWidget {
                   ),
                   FltButton(
                     btnFunction: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) {
                           return SignUp();

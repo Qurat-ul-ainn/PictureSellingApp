@@ -21,8 +21,8 @@ class _HomePageState extends State<HomePage> {
 
  getUser() async {
    FirebaseUser cuser =  await _auth.currentUser();
-
-   DocumentSnapshot user = await _firestore.collection("UserInfo").document(cuser.uid).get();
+   String code = cuser.uid.substring(0, 6);
+   DocumentSnapshot user = await _firestore.collection("UserInfo").document(code).get();
    print(user.data);
    setState(() {
      _name = user.data["Name"];

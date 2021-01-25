@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:streamo/services/database_model.dart';
 import 'package:streamo/login_signup/login_screen.dart';
+import 'package:toast/toast.dart';
 import 'components.dart';
 
 class SignUp extends StatelessWidget {
@@ -21,7 +22,7 @@ class SignUp extends StatelessWidget {
     FirebaseUser cuser =  await _auth.currentUser();
 
      print("aa $code");
-     firestore.collection("UserInfo").document(cuser.uid).setData(userInfo);
+     firestore.collection("UserInfo").document(code).setData(userInfo);
 //         .add(userInfo)
 //         .then((DocumentReference document) {
 //      print(document.documentID);
@@ -30,23 +31,25 @@ class SignUp extends StatelessWidget {
 //    });
   }
 
-//  Future<void> updateData() async{
-//    Firestore firestore = Firestore.instance;
-//    DocumentSnapshot user = await firestore.collection("UserInfo").document(_refCodeController.text).get();
-//    int _earnedMoney = user.data["EarnMoney"];
-//    int _points = user.data["Points"];
-//    firestore.collection("UserInfo").where({'Refferal Code', "==", code}).;
-//
-//
-////         .add(userInfo)
-////         .then((DocumentReference document) {
-////      print(document.documentID);
-////    }).catchError((e) {
-////      print(e);
-////    });
-//  }
 
-  Future<bool> registration(String homePage ,String email, String phone,String pass,int points,String referral)async{
+  Future<void> updateData() async{
+    Firestore firestore = Firestore.instance;
+    DocumentSnapshot user = await firestore.collection("UserInfo").document(_refCodeController.text).get();
+    int _earnedMoney = user.data["EarnMoney"];
+    int _points = user.data["Points"];
+    firestore.collection("UserInfo").document(_refCodeController.text).updateData({"EarnMoney" : _earnedMoney+20,
+    "Points" : _points +20});
+
+
+//         .add(userInfo)
+//         .then((DocumentReference document) {
+//      print(document.documentID);
+//    }).catchError((e) {
+//      print(e);
+//    });
+  }
+
+  Future<bool> registration(String homePage ,String email, String phone,String pass,int points,String referral, BuildContext context)async{
     FirebaseAuth _auth = FirebaseAuth.instance;
     try{
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: pass);
@@ -56,10 +59,21 @@ class SignUp extends StatelessWidget {
       info.displayName=homePage;
       code = user.uid.substring(0, 6);
       user.updateProfile(info);
-      final userInfo =DataCollection(homePage, email,phone, pass,points, code,earnedMoney);
-      insertData(userInfo.toMap());
-     // updateData();
+      
+      if(user != null) {
+        Toast.show("Registered Successfully", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        final userInfo = DataCollection(
+            homePage,
+            email,
+            phone,
+            pass,
+            points,
+            code,
+            earnedMoney);
 
+        insertData(userInfo.toMap());
+         updateData();
+      }
       return true;
     }
     catch(e){
@@ -71,6 +85,7 @@ class SignUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -78,11 +93,11 @@ class SignUp extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: 10),
+                SizedBox(height: 30),
                 Text(
-                  'HELO!\nSignup to\nget started',
+                  'HELLO! Sign Up to get started',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     color: Colors.blue[900],
@@ -96,22 +111,27 @@ class SignUp extends StatelessWidget {
                 Component(
                   txtHint: 'Name',
                   txtController: _homePageController,
+                  passHide: false,
                 ),
                 Component(
                   txtHint: 'Email Address',
                   txtController: _emailController,
+                  passHide: false,
                 ),
                 Component(
                   txtHint: 'Mobile Number',
                   txtController: _phoneController,
+                  passHide: false,
                 ),
                 Component(
-                  txtHint: 'Password',
+                  txtHint: 'Enter 6 digit Password',
                   txtController: _passController,
+                  passHide: false,
                 ),
                 Component(
                   txtHint: 'Referral Code',
                   txtController: _refCodeController,
+                  passHide: false,
                 ),
                 Button(
                   btnTxt: 'Sign Up',
@@ -125,10 +145,10 @@ class SignUp extends StatelessWidget {
 
 
 
-                    bool result = await registration(gHomePage, gEmail,gPhone, gPass,points, gReferral);
+                    bool result = await registration(gHomePage, gEmail,gPhone, gPass,points, gReferral, context);
 
                     if(result){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
                         return SignIn();
                       }));
                     }
