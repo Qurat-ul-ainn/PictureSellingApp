@@ -4,8 +4,8 @@ class DataCollection {
   final String mobile;
   final String pass;
   final String referralCode;
-  final int points;
-  final int earnMoney;
+  final String points;
+  final String earnMoney;
 
   DataCollection(this.name, this.email, this.mobile, this.pass, this.points,
       this.referralCode, this.earnMoney);
@@ -13,7 +13,6 @@ class DataCollection {
   Map<String, dynamic> toMap() {
     return {
       'Name': name,
-
       'Email': email,
       'Mobile': mobile,
       'Pass': pass,

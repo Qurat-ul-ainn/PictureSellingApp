@@ -1,55 +1,87 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:streamo/services/database_model.dart';
 import 'package:streamo/login_signup/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'components.dart';
 
-class SignUp extends StatelessWidget {
-  final _homePageController =TextEditingController();
+class UserSignUp extends StatelessWidget {
+  final _nameController =TextEditingController();
   final _emailController =TextEditingController();
   final _phoneController = TextEditingController();
   final _passController =TextEditingController();
   final _refCodeController =TextEditingController();
-  String points = '0';
-  String earnedMoney='0';
-
-
+  final String _type= 'User';
+  String code;
 
   Future<void> insertData(final userInfo) async{
     Firestore firestore = Firestore.instance;
+    FirebaseAuth _auth = FirebaseAuth.instance;
+   // FirebaseUser cuser =  await _auth.currentUser();
 
-    firestore.collection("UserInfo").add(userInfo)
-        .then((DocumentReference document) {
-      print(document.documentID);
-    }).catchError((e) {
-      print(e);
-    });
+     print("aa $code");
+     firestore.collection("UserInfo").document(code).setData(userInfo);
+//         .add(userInfo)
+//         .then((DocumentReference document) {
+//      print(document.documentID);
+//    }).catchError((e) {
+//      print(e);
+//    });
   }
 
-  Future<bool> registration(String homePage ,String email, String phone,String pass,String points,String referral)async{
+
+  Future<void> updateData() async{
+    Firestore firestore = Firestore.instance;
+    DocumentSnapshot user = await firestore.collection("UserInfo").document(_refCodeController.text).get();
+    int _earnedMoney = user.data["EarnMoney"];
+    int _points = user.data["Points"];
+    firestore.collection("UserInfo").document(_refCodeController.text).updateData({"EarnMoney" : _earnedMoney+20,
+    "Points" : _points +20});
+
+
+//         .add(userInfo)
+//         .then((DocumentReference document) {
+//      print(document.documentID);
+//    }).catchError((e) {
+//      print(e);
+//    });
+  }
+
+  Future<bool> registration(String homePage ,String email, String phone,String pass,String type, BuildContext context)async{
     FirebaseAuth _auth = FirebaseAuth.instance;
-    try{
+   /* try{
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: pass);
       FirebaseUser user =result.user;
 
       UserUpdateInfo info= UserUpdateInfo();
       info.displayName=homePage;
+      code = user.uid.substring(0, 6);
       user.updateProfile(info);
 
+      if(user != null) {
+        Toast.show("Registered Successfully", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        final userInfo = DataCollection(
+            homePage,
+            email,
+            phone,
+            pass,
+            type,
+            );
 
+        insertData(userInfo.toMap());
+         updateData();
+      }
       return true;
     }
     catch(e){
       print(e);
       return false;
-    }
+    }*/
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -57,11 +89,11 @@ class SignUp extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: 10),
+                SizedBox(height: 30),
                 Text(
-                  'HELO!\nSignup to\nget started',
+                  'USER Sign Up ',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     color: Colors.blue[900],
@@ -74,51 +106,47 @@ class SignUp extends StatelessWidget {
                 ),
                 Component(
                   txtHint: 'Name',
-                  txtController: _homePageController,
+                  txtController: _nameController,
+                //  passHide: false,
                 ),
                 Component(
                   txtHint: 'Email Address',
                   txtController: _emailController,
+                 // passHide: false,
                 ),
                 Component(
                   txtHint: 'Mobile Number',
                   txtController: _phoneController,
+                 // passHide: false,
                 ),
                 Component(
-                  txtHint: 'Password',
+                  txtHint: 'Enter 6 digit Password',
                   txtController: _passController,
-                ),
-                Component(
-                  txtHint: 'Referral Code',
-                  txtController: _refCodeController,
+                 // passHide: false,
                 ),
                 Button(
                   btnTxt: 'Sign Up',
                   btnFunction: () async {
-                    final gHomePage = _homePageController.text.toString().trim();
+                    final gName = _nameController.text.toString().trim();
                     final gEmail = _emailController.text.toString().trim();
                     final gPhone = _phoneController.text.toString().trim();
                     final gPass = _passController.text.toString().trim();
-                    final gReferral = _phoneController.text.toString().trim();
 
+                    bool result = await registration(gName, gEmail,gPhone, gPass, _type, context);
 
-                    final userInfo =DataCollection(gHomePage, gEmail,gPhone, gPass,gReferral,points,earnedMoney);
-                    insertData(userInfo.toMap());
-                    bool gResult = await registration(gHomePage, gEmail,gPhone, gPass,gReferral,points);
-
-                    if(gResult){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                    if(result){
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
                         return SignIn();
                       }));
                     }
                     else{
-                      print('Not register please sign up first');
+                      print('Error');
                     }
                   },
                 ),
                 FltButton(
                   btnFunction: (){
-                    Navigator.pop(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) {
                         return SignIn();

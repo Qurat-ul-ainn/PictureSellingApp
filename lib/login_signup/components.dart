@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Component extends StatelessWidget {
-  final bool passHide;
+
   final String txtHint;
   final txtController;
 
-  const Component({Key key, this.txtHint,this.txtController, this.passHide}) : super(key: key);
+  const Component({Key key, this.txtHint,this.txtController}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,12 +28,10 @@ class Component extends StatelessWidget {
       ),
       child: TextFormField(
         controller: txtController,
-        obscureText: passHide,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.only(left: 20.0),
           hintText: txtHint,
           border: InputBorder.none,
-
 
           hintStyle: TextStyle(
             color: Colors.grey.shade500,
@@ -95,8 +94,8 @@ class FltButton extends StatelessWidget {
         child: Text(
           btnTxt,
           style: TextStyle(
-            color: Colors.blue[900],
-            fontSize: 15
+              color: Colors.blue[900],
+              fontSize: 15
           ),
         ),
       ),

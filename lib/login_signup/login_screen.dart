@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:streamo/home_screen.dart';
+import 'package:streamo/image_gallery/gallery_imagesscreen.dart';
 import 'components.dart';
 import 'signup_screen.dart';
 
 class SignIn extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
+
+
 
   Future<FirebaseUser> ifRegister(String email, String pass) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
@@ -26,17 +28,17 @@ class SignIn extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(height: 60),
                   Text(
-                    'HELLO AGAIN! WELCOME BACK',
+                    'HELO AGAIN!\nWELCOM\nBACK',
                     style: TextStyle(
                       color: Colors.blue[900],
                       fontWeight: FontWeight.bold,
@@ -49,12 +51,10 @@ class SignIn extends StatelessWidget {
                   Component(
                     txtHint: 'Email Address',
                     txtController: _emailController,
-                    passHide: false,
                   ),
                   Component(
                     txtHint: 'Password',
                     txtController: _passController,
-                    passHide: true,
                   ),
                   Button(
                     btnTxt: 'Sign In',
@@ -65,10 +65,11 @@ class SignIn extends StatelessWidget {
                       FirebaseUser user = await ifRegister(email, pass);
 
                       if (user != null) {
-                        Navigator.of(context)
-                            .pushReplacement(MaterialPageRoute(builder: (context) {
-                          return HomePage(
 
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
+                          return ImageGallery(
+                            // userInfo: user.displayName,
                           );
                         }));
                       } else {
@@ -78,7 +79,7 @@ class SignIn extends StatelessWidget {
                   ),
                   FltButton(
                     btnFunction: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) {
                           return SignUp();
